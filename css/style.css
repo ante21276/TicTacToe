@@ -146,3 +146,9 @@ h1 {
 .active p {
   color: white;
 }
+.message {
+  position: relative;
+  font-size: 36px;
+  color: white;
+  margin: 150px 0;
+}

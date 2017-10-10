@@ -109,7 +109,7 @@ function player_wins(player_w, name_one_prompt, player_one_n, player_two_n) { //
   start_screen.className = "screen screen-win-" + player_w;
   start_screen.hidden = false;
   startGameBtn.innerHTML = "New game";
-  document.querySelector(".message").innerText = "PLAYER " + name_one_prompt.toUpperCase() + " WINS";
+  document.querySelector(".message").innerText = "Player " + name_one_prompt.toUpperCase() + " Wins!";
   $("#player" + player_one_n + " p").remove();
   $("#player" + player_two_n + " p").remove();
   count = 0;
