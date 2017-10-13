@@ -51,7 +51,7 @@ h1 {
     .screen-start h1 + .button {
       margin-top: 5em; }
   .screen-win p {
-    font-size: 6em;
+    font-size: 3em;
     font-weight: 700;
     color: #fff;
     position: relative; }
@@ -148,7 +148,6 @@ h1 {
 }
 .message {
   position: relative;
-  font-size: 36px;
   color: white;
   margin: 150px 0;
 }

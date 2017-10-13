@@ -1,173 +1,100 @@
-let html = "<div class='screen screen-start' id='start'>";
-html += "<header>";
-html += "<h1>Tic Tac Toe</h1>";
-html += "<p class='message'></p>";
-html += "<a href='#' class='button'>Start game</a>";
-html += "</header></div>";
-
-const body = document.querySelector("body");
-body.innerHTML += html;
-let startGameBtn = document.querySelector(".button");
-let start_screen = document.querySelector(".screen");
-let fields = document.querySelectorAll(".box");
-let ul_fields = document.querySelector(".boxes");
-let player1wins, player2wins;
-let player1fields = [];
-let player2fields = [];
-let name_one_prompt = "";
-let name_two_prompt = "";
-let count = 0;
-
-function prompti() { // Prompt cant be empty check
-  while (name_one_prompt === "" || name_two_prompt === "" || name_one_prompt == null || name_two_prompt === null) {
-    name_one_prompt = prompt("Please enter player 1 name.");
-    name_two_prompt = prompt("Please enter player 2 name.");
+!function() {
+  let count = 9;
+  let fields = document.querySelector(".boxes");
+  let players_ul = document.querySelector("header").children[1];
+  let ply1_name, ply2_name;
+  let ply1_isPlaying = true, ply2_isPlaying = false;
+  let ply1_fields = generateArray(), ply2_fields = generateArray();
+  !function addAttr() {
+    for(let i = 0; i < 9;i++){
+      fields.children[i].setAttribute("data-attr", i);}
+  }()
+  function generateArray() {
+    return [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
   }
-};
-/***************
- Add Start Game
-****************/
-let win_html = "";
-let win2_html = "";
-
-win_html += "<div class='screen screen-win-one' id='finish'>";
-win_html += "<header>";
-win_html += "<h1>Tic Tac Toe</h1>";
-win_html += "<p class='message'></p>";
-win_html += "<a href='#' class='button'>New game</a>";
-win_html += "</header></div>";
-
-startGameBtn.onclick = () => {
-  prompti();
-  let p = document.createElement("p");
-  let p2 = document.createElement("p");
-  document.querySelector("#player1").append(p);
-  p.innerHTML = name_one_prompt.toUpperCase();
-  document.querySelector("#player2").append(p2);
-  p2.innerHTML = name_two_prompt.toUpperCase();
-  start_screen.hidden = true;  //Hide Start
-  for(let i = 0; i < fields.length; i++){
-    ul_fields.children[i].className = "box";
-    fields[i].style.backgroundImage = "";
+  function html(clas, id, p, button){
+    let html = "<div class='screen screen-" + clas + "' id=" + id + ">";
+    html += "<header>";
+    html += "<h1>Tic Tac Toe</h1>";
+    html += "<p class='message'>" + p + "</p>";
+    html += "<a href='#' class='button'>" + button + "</a>";
+    html += "</header></div>";
+    return html;
   }
-  player1wins = [
-    [0,1,2], [3,4,5], [6,7,8], [0,3,6],
-    [1,4,7], [2,5,8], [0,4,8], [2,4,6]
-  ];
-  player2wins = [
-    [0,1,2], [3,4,5], [6,7,8], [0,3,6],
-    [1,4,7], [2,5,8], [0,4,8], [2,4,6]
-  ];
-}
-/***************
-  Rules
-****************/
-function Player (number, symbol) {
-  this.player = document.querySelector("#player" + number);//player
-  this.player.className = "players active"; //player highlight
-  this.isPlaying = true;
-  for(let i = 0; i < fields.length; i++){ //Mouse over field change background image to symbol
-    fields[i].addEventListener("mouseover", (e) => {
-      if(e.target.tagName === "LI" && this.isPlaying === true && e.target.className === "box") {
-        fields[i].style.backgroundImage = "url('img/" + symbol + ".svg')";
-      };
-    });
-    fields[i].addEventListener("mouseout", (e) => { //Mouse out field background image disappear
-      if(e.target.tagName === "LI" && this.isPlaying === true && e.target.className === "box") {
-        fields[i].style.backgroundImage = "";
-      };
-    });
-    fields[i].addEventListener("click", (e) => { // Click on empty field symbol appears
-      if(e.target.tagName === "LI" && this.isPlaying === true && e.target.className === "box") {
-        fields[i].className = "box box-filled-" + number;
-        this.player.className = "players";
-        this.isPlaying = false;
-        if(number === 1) {
-          player1fields.push(i);
-        } else if(number === 2) {
-            player2fields.push(i);
-        }
-      }
-    });
+  !function startScreen() { // Show start screen
+    $("#board").hide();
+    $("body").append(html('start', 'start', '','Start game'));
+  }();
+  function addActive() { // Add active class to X or O
+    ply1_isPlaying == true ? $("#player1").addClass("active") : $("#player1").removeClass("active");
+    ply2_isPlaying == true ? $("#player2").addClass("active") : $("#player2").removeClass("active");
   }
-};
-let player1;
-let player2;
-function activate1() {
-  player1 = new Player(1, "o");
-}
-function activate2() {
-  player2 = new Player(2, "x");
-}
-activate1();
-
-let one = 0;
-let two = 1;
-
-function player_wins(player_w, name_one_prompt, player_one_n, player_two_n) { //If player wins window changes
-  start_screen.id = "finish";
-  start_screen.className = "screen screen-win-" + player_w;
-  start_screen.hidden = false;
-  startGameBtn.innerHTML = "New game";
-  document.querySelector(".message").innerText = "Player " + name_one_prompt.toUpperCase() + " Wins!";
-  $("#player" + player_one_n + " p").remove();
-  $("#player" + player_two_n + " p").remove();
-  count = 0;
-}
-
-ul_fields.addEventListener("click", (e) => { //Listens if it is clicked on the field
-  if(e.target.tagName === "LI" && two === 1) {
-    activate2();
-    two = 0;
-    one = 1;
-  if(e.target.className === "box box-filled-2" || e.target.className === "box box-filled-1"){
-    count += 1;
+  function startBtn() { // Shows board
+    $(".button").click(() => {
+      ply1_name = prompt("Enter player 1 name").toUpperCase();
+      ply2_name = prompt("Enter player 2 name").toUpperCase();
+      var p = document.createElement("P");
+      var p1 = document.createElement("P");
+      p.innerHTML = ply1_name;
+      p1.innerHTML = ply2_name;
+      players_ul.children[0].appendChild(p);
+      players_ul.children[1].appendChild(p1);
+      $("#board").show();
+      $("#start").remove();
+      addActive();
+    });
   };
-    for(let j = 0; j < 8; j++){
-      if(player1wins[j].includes(player1fields[0])) {
-        let index1 = player1wins[j].indexOf(player1fields[0]);
-        if(index1 > -1) {
-          player1wins[j].splice(index1,1);
-        }
+  function hoverField(){ //Hover fields symbol appear
+    startBtn();
+    fields.addEventListener("mouseover", (e)=>{
+      if(e.target.className === "box" && ply1_isPlaying == true){e.target.style.backgroundImage = "url(img/o.svg)";}
+      else if (e.target.className === "box" && ply2_isPlaying == true) {e.target.style.backgroundImage = "url(img/x.svg)";}
+    });
+    fields.addEventListener("mouseout", (e)=>{
+      e.target.style.backgroundImage = ""
+    });
+  };
+  function subtract(player_num_fields, e, num, name) {
+    for(let i= 0; i < 8; i++) {
+      let index = player_num_fields[i].indexOf(parseInt(e.target.attributes[1].value));
+      if(index > -1) {
+        player_num_fields[i].splice(index,1);
       }
-      if(player1wins[j].length === 0) {
-        player_wins("one", name_one_prompt, 1, 2); //If player wins window changes
+      if(player_num_fields[i].length < 1) {
+        !function startScreen() { // Show start screen
+          $("#board").hide();
+          $("body").append(html('win screen-win-' + num, 'finish', 'Player ' + name + ' has won','New Game'));
+        }();
       }
     }
-    player1fields.pop();
-  } else if (e.target.tagName === "LI" && one === 1) {
-      activate1();
-      one = 0;
-      two = 1;
-      if(e.target.className === "box box-filled-2" || e.target.className === "box box-filled-1"){
-        count += 1;
-      };
-      for(let j = 0; j < 8; j++){
-        if(player2wins[j].includes(player2fields[0])) {
-          let index1 = player2wins[j].indexOf(player2fields[0]);
-          if(index1 > -1) {
-            player2wins[j].splice(index1,1);
-          }
-        }
-        if(player2wins[j].length === 0) {
-          player_wins("two", name_two_prompt, 1, 2); //If player wins window changes
-        }
+  }
+  function clickField (){
+    hoverField();
+    fields.addEventListener("click", (e)=>{ //Start listener
+      if(e.target.className === "box" && ply1_isPlaying == true){
+        count --;
+        subtract(ply1_fields,e,"one", ply1_name);
+        e.target.className = "box box-filled-1";
+        ply1_isPlaying = false;ply2_isPlaying = true;
+        addActive();
       }
-      player2fields.pop();
-    }
-    if(count === 9) { //count if all fields are clicked to announce tie
-      start_screen.id = "finish";
-      start_screen.className = "screen screen-win-two";
-      start_screen.hidden = false;
-      startGameBtn.innerHTML = "New game";
-      document.querySelector(".message").innerText = "IT IS TIE!!";
-      $("#player1 p").remove();
-      $("#player2 p").remove();
-      count = 0;
-    }
-}); //End of listener
-
-
-
-
-//
+      else if(e.target.className === "box" && ply2_isPlaying == true){count--;subtract(ply2_fields,e,"two", ply2_name);e.target.className = "box box-filled-2";ply2_isPlaying = false;ply1_isPlaying = true;addActive()}
+      if(count === 0) {
+        !function startScreen(num) { // Show start screen
+          $("#board").hide();
+          $("body").append(html('win screen-win-' + num, 'finish', 'It is TIE !!','New Game'));
+        }("tie");
+      }
+      $(".button").click(() => {
+        $("#board").show();
+        $("#finish").remove();
+        $(".boxes li").removeClass().addClass("box");
+        addActive();
+        ply1_fields = generateArray()
+        ply2_fields = generateArray();
+        count = 9;
+      });
+    }); // End listener
+  }
+  clickField();
+}();
